@@ -44,90 +44,81 @@ https://github.com/user-attachments/assets/5585c018-ac8a-4875-85a8-a34edcc266df
 
 ```mermaid
 flowchart LR
-    %% ---------------- VIDEO BACKBONE ----------------
-    A[Herelink RTSP] --> B[Persistent FFmpeg Backbone]
 
-    B --> C[Raw MKV Recording]
-    B --> D[GUI UDP Stream]
-    B --> E[Local Vision Relay]
-    E --> F[Shared Frame Decoder]
+    A["Herelink RTSP"] --> B["Persistent FFmpeg Backbone"]
 
-    %% ---------------- MODE CONTROL ----------------
-    F --> MODE{Active Mode}
+    B --> C["Raw MKV Recording"]
+    B --> D["GUI UDP Stream"]
+    B --> E["Local Vision Relay"]
+    E --> F["Shared Frame Decoder"]
 
-    MODE -->|Q| Q1[QR Processing]
-    MODE -->|K| K1[YOLO + ByteTrack]
-    MODE -->|IDLE| IDLE[No Vision Inference]
+    F --> MODE{"Active Mode"}
 
-    %% ---------------- QR PIPELINE ----------------
-    Q1 --> QROI[Target Area + Scan ROI]
+    MODE -->|Q| Q1["QR Processing"]
+    MODE -->|K| K1["YOLO + ByteTrack"]
+    MODE -->|IDLE| IDLE["No Vision Inference"]
 
-    QROI --> QW[WeChatQRCode]
-    QROI --> QP[pyzbar / OpenCV Fallback]
+    Q1 --> QROI["Target Area + Scan ROI"]
 
-    QW --> QR[QR Result Dispatcher]
+    QROI --> QW["WeChatQRCode"]
+    QROI --> QP["pyzbar / OpenCV Fallback"]
+
+    QW --> QR["QR Result Dispatcher"]
     QP --> QR
 
-    QR --> QGATE{QR Publish Gate}
+    QR --> QGATE{"QR Publish Gate"}
 
-    QGATE -->|Readable QR| QIN[Full QR Inside Target ROI?]
-    QIN -->|Yes| QCHAR[Valid Text - More Than 1 Character]
-    QCHAR --> QSESSION[One Packet per Q Session]
-    QSESSION --> QPUB[ROS /kamikaze_bilgisi]
+    QGATE -->|Readable QR| QIN{"Full QR Inside Target ROI?"}
+    QIN -->|Yes| QCHAR{"Text Length > 1?"}
+    QCHAR -->|Yes| QSESSION{"Already Published in This Q Session?"}
+    QSESSION -->|No| QPUB["ROS: /kamikaze_bilgisi"]
 
-    QPUB --> QPACKET[Kamikaze Start Time + End Time + QR Text]
+    QPUB --> QPACKET["Kamikaze Start Time + End Time + QR Text"]
 
-    QR --> QDISPLAY[Local QR Display Overlay]
+    QR --> QDISPLAY["Local QR Display Overlay"]
 
-    %% ---------------- LOCK / DETECTION PIPELINE ----------------
-    K1 --> YOLO[Raw YOLO Detections]
-    K1 --> BT[ByteTrack IDs]
+    K1 --> YOLO["Raw YOLO Detections"]
+    K1 --> BT["ByteTrack IDs"]
 
-    YOLO --> VALID[Hit Area + Minimum Size Validation]
-    VALID --> CAND[Highest-Confidence Valid Lock Candidate]
+    YOLO --> VALID["Hit Area + Minimum Size Validation"]
+    VALID --> CAND["Highest-Confidence Valid Lock Candidate"]
 
-    %% Candidate is shared by timer, pixel publish and evaluation video
-    CAND --> PIXEL[ROS /hedef_piksel]
-    CAND --> TIMER[4 s Lock Timer]
-    CAND --> EBOX[Red Candidate Box]
+    CAND --> PIXEL["ROS: /hedef_piksel"]
+    CAND --> TIMER["4 s Lock Timer"]
+    CAND --> EBOX["Red Candidate Box"]
 
-    TIMER --> MISS{YOLO Candidate Lost?}
-    MISS -->|No detection - max 200 ms| TIMER
-    MISS -->|More than 200 ms| RESET[Reset Timer]
+    TIMER --> MISS{"Candidate Missing?"}
+    MISS -->|"No YOLO detection <= 200 ms"| TIMER
+    MISS -->|"Missing > 200 ms"| RESET["Reset Lock Timer"]
 
-    TIMER -->|4.0 s completed| LOCKPUB[ROS /kilitlenme_bilgisi]
+    TIMER -->|"4.0 s completed"| LOCKPUB["ROS: /kilitlenme_bilgisi"]
 
-    %% ---------------- TRACKING / MANUAL FOCUS ----------------
-    BT --> SELECT[B / N Target Selection]
-    SELECT --> FOCUS[SPACE Manual Focus]
-    FOCUS --> TRACK[Focused ByteTrack Target]
+    BT --> SELECT["B / N Target Selection"]
+    SELECT --> FOCUS["SPACE Manual Focus"]
+    FOCUS --> TRACK["Focused ByteTrack Target"]
 
-    TRACK --> TARGETPUB[ROS /target_data]
+    TRACK --> TARGETPUB["ROS: /target_data"]
 
-    YOLO --> FALLBACK[Raw YOLO Physical-Target Fallback]
+    YOLO --> FALLBACK["Raw YOLO Physical-Target Fallback"]
     FALLBACK --> TRACK
 
-    %% ---------------- LOCAL LOCK DISPLAY ----------------
-    YOLO --> KDISPLAY[Local LOCK Debug Display]
+    YOLO --> KDISPLAY["Local LOCK Debug Display"]
     BT --> KDISPLAY
     CAND --> KDISPLAY
 
-    %% ---------------- EVALUATION VIDEO ----------------
-    F -->|QR or IDLE| CLEAN[Clean Evaluation Frame]
-    CLEAN --> REC[Evaluation Recorder]
+    F -->|"QR or IDLE"| CLEAN["Clean Evaluation Frame"]
+    CLEAN --> REC["Evaluation Recorder"]
 
     EBOX --> REC
 
-    REC --> CLOCK[Draw /server_time]
-    CLOCK --> MP4[Competition Evaluation MP4 - Fixed FPS]
+    REC --> CLOCK["Draw Server Time"]
+    CLOCK --> MP4["Competition Evaluation MP4 - Fixed FPS"]
 
-    %% ---------------- SERVER TIME ----------------
-    ST[/server_time] --> QPUB
+    ST["ROS: /server_time"] --> QPUB
     ST --> LOCKPUB
     ST --> REC
 
-    %% ---------------- LOGGING ----------------
-    B --> LOGS[Unified Flight Logs]
+    B --> LOGS["Unified Flight Logs"]
     QR --> LOGS
     K1 --> LOGS
     TIMER --> LOGS
