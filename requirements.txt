@@ -1,0 +1,7 @@
+# Python-level dependencies.
+# OpenCV is intentionally not pinned here because ROS Noetic/cv_bridge users
+# should keep an OpenCV build compatible with their ROS installation.
+ultralytics
+numpy
+PyYAML
+pyzbar

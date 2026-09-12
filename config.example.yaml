@@ -1,0 +1,66 @@
+# -----------------------------------------------------------------------------
+# TUNGA UAV Vision System - public example configuration
+# Copy this file to config.yaml and edit values for your own platform.
+# -----------------------------------------------------------------------------
+
+# Detection model
+weights: weights/your_model.pt
+outputs_dir: outputs
+
+# Camera / Herelink RTSP
+rtsp_url: rtsp://127.0.0.1:8554/fpv_stream
+capture_width: 1280
+capture_height: 720
+capture_fps: 30
+
+# Shared processing frame
+processing_width: 1280
+processing_height: 720
+top_crop_px: 36
+
+# YOLO / ByteTrack
+conf_threshold: 0.40
+iou_threshold: 0.45
+imgsz: 1024
+device: 0                  # 0 = first CUDA GPU, "cpu" = CPU
+
+# Target-state management
+temporary_lost_frames: 10
+lost_frames: 15
+reset_frames: 20
+
+# LOCK queue / competition timing
+frame_queue_size: 90
+lock_duration_s: 4.0
+min_target_axis_ratio: 0.06
+
+# Hit / lock area as frame ratios
+hit_left_ratio: 0.25
+hit_right_ratio: 0.75
+hit_top_ratio: 0.10
+hit_bottom_ratio: 0.90
+
+# ROS topic overrides
+target_data_topic: /target_data
+lock_topic: /kilitlenme_bilgisi
+
+# Local display
+show: true
+show_latency_debug: false
+window_width: 960
+window_height: 540
+
+# Persistent video backbone
+raw_record_enabled: true
+gui_stream_enabled: false
+gui_stream_host: 127.0.0.1
+gui_stream_port: 5000
+vision_relay_host: 127.0.0.1
+vision_relay_port: 5601
+
+# Competition evaluation recording
+evaluation_record_enabled: true
+evaluation_fps: 30
+evaluation_encoder: libx264
+evaluation_preset: ultrafast
+evaluation_crf: 18

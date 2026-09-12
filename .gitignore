@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+tunga/
+venv/
+.venv/
+env/
+
+# Local configuration
+config.yaml
+.env
+.env.*
+
+# Model weights / generated model files
+weights/*.pt
+weights/*.pth
+weights/*.onnx
+weights/*.engine
+wechat_qrcode_models/*.caffemodel
+wechat_qrcode_models/*.prototxt
+
+# Flight outputs
+outputs/
+flight_logs/
+recordings/
+logs/
+*.mkv
+*.avi
+
+# Generated test data
+hybrid_frame_test*/
+*crops*/
+*.csv
+!docs/*.csv
+
+# Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local inventory / scratch files
+project_inventory.txt
+trickster
