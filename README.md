@@ -15,6 +15,7 @@ Real-time fixed-wing UAV vision software that combines **aerial target detection
 Real-flight target detection and persistent tracking with YOLO + ByteTrack. The lock pipeline also tracks lock duration, temporary target-loss tolerance, target validity, queue delay, processing time, and frame age. **The full-screen recording intentionally keeps the ROS terminals visible so target/focus and mission-topic output can be inspected alongside the vision pipeline.**
 
 https://github.com/user-attachments/assets/8c7644ac-2bd7-4644-830d-c142ff4ca7f7
+Overlay note: Multiple bounding boxes around the same aircraft are intentional, not duplicate detections. The inner detection box represents the raw YOLO output used for lock validation and timing, while the outer tracking box represents the ByteTrack target state used for ID-based selection, focus, and /target_data publishing. Box colors change according to detection validity, target selection, focus, and fallback state.
 
 
 ### QR Detection During UAV Dive
