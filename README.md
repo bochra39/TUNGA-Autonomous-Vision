@@ -147,11 +147,11 @@ Additional controls in the final integrated application:
 ## Repository Structure
 
 ```text
-TUNGA-UAV-Vision-System/
+TUNGA-Autonomous-Vision/
 ├── main.py                         # Final integrated competition implementation
 ├── config.example.yaml             # Public configuration template
 ├── requirements.txt                 # Direct Python dependencies
-├── requirements-opencv.txt          # Optional clean-env OpenCV-contrib install
+├── installation.md                  # Full dependency and runtime checklist
 ├── .gitignore
 ├── src/
 │   ├── tracker.py                  # YOLO + ByteTrack wrapper
@@ -163,7 +163,6 @@ TUNGA-UAV-Vision-System/
 │   └── check_environment.py
 ├── docs/
 │   ├── architecture.md
-│   ├── installation.md
 │   ├── target_tracking.md
 │   ├── qr_pipeline.md
 │   └── ros_interfaces.md
@@ -198,17 +197,17 @@ python3 -m pip install -r requirements.txt
 
 `requirements.txt` covers the direct pip packages only. A **full competition run additionally requires ROS Noetic, FFmpeg, native ZBar, OpenCV with WeChatQRCode support, the trained YOLO weights, the four WeChat QR model files, a reachable RTSP source, and a live `/server_time` ROS topic.**
 
-> **ROS/OpenCV note:** the repository intentionally does not force-install a specific OpenCV wheel in `requirements.txt`. On ROS Noetic systems, replacing the OpenCV build blindly can break other ROS/OpenCV integrations. Use an OpenCV-contrib build compatible with your environment. For a clean non-ROS Python environment, `requirements-opencv.txt` is provided.
+> **ROS/OpenCV note:** the repository intentionally does not force-install a specific OpenCV wheel in `requirements.txt`. On ROS Noetic systems, replacing the OpenCV build blindly can break other ROS/OpenCV integrations. Use an OpenCV-contrib build compatible with your environment.
 
-See **[`docs/installation.md`](docs/installation.md)** for the complete dependency and runtime checklist.
+See **[`installation.md`](installation.md)** for the complete dependency and runtime checklist.
 
 ## Setup
 
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
-cd TUNGA-UAV-Vision-System
+git clone https://github.com/bochra39/TUNGA-Autonomous-Vision.git
+cd TUNGA-Autonomous-Vision
 ```
 
 ### 2. Create your local configuration
